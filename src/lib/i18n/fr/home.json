@@ -1,4 +1,5 @@
 {
     "description": "Un escape game vivant et immersif",
+    "codeLabel": "Code du jeu",
     "play": "Jouer"
 }

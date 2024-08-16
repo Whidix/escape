@@ -1,9 +1,26 @@
-<script>
+<script lang="ts">
     import { t, locales, locale } from '$lib/i18n';
+
+    import { formSchema, type FormSchema } from "./schema";
+    import {
+        superForm,
+    } from "sveltekit-superforms";
+    import { zodClient } from "sveltekit-superforms/adapters";
+    
+    import type { PageData } from "./$types";
+    export let data: PageData;
+    
+    const form = superForm(data.form, {
+        validators: zodClient(formSchema),
+		dataType: 'json'
+    });
+    
+    const { form: formData, enhance } = form;
 
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
+    import * as Form from "$lib/components/ui/form";
     import * as RadioGroup from "$lib/components/ui/radio-group";
 </script>
 
@@ -14,15 +31,19 @@
             {$t('home.description')}
             </p>
         </div>
-        <div class="grid gap-4 w-[300px]">
-            <div class="grid gap-2">
-            <Label for="code">Code</Label>
-            <Input id="code" type="text" maxlength={6} placeholder="XXXXXX" required />
-            </div>
+        <form method="POST" use:enhance class="grid gap-4 w-[300px]">
+            <Form.Field {form} name="code">
+              <Form.Control let:attrs>
+                <Form.Label class="text-xl">{$t('home.codeLabel')}</Form.Label>
+                <Input {...attrs} maxlength={6} placeholder="XXXXXX" bind:value={$formData.code} />
+              </Form.Control>
+              <Form.Description />
+              <Form.FieldErrors />
+            </Form.Field>
             <Button type="submit" class="w-full text-xl">
             {$t('home.play')}
             </Button>
-        </div>
+          </form>
         <RadioGroup.Root bind:value="{$locale}" class="grid gap-2 grid-cols-2">
             {#each $locales as value}
                 <Label for={value} class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4">
@@ -32,6 +53,6 @@
             {/each}
         </RadioGroup.Root>
         <div class="grid gap-2">
-            <p>Open source on <a href="#">GitHub</a></p>
+            <p>Open source on <a href="https://github.com/Whidix/escape">GitHub</a></p>
         </div>
 </div>
