@@ -29,3 +29,71 @@ model Session {
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
+
+model EscapeGame {
+  id          String @id
+  name        String
+  description String
+
+  sessions EscapeSession[]
+  steps    EscapeStep[]
+}
+
+enum StepType {
+  TEXT
+  QUESTION
+  GEO
+  PUZZLE
+}
+
+model EscapeStep {
+  id       String   @id
+  escapeId String
+  name     String
+  order    Int
+  type     StepType
+  answer   String?
+  text     String?
+  geo      String?
+  puzzle   String?
+
+  items  EscapeItem[]
+  escape EscapeGame @relation(fields: [escapeId], references: [id])
+
+  @@unique([escapeId, order])
+}
+
+model EscapeSession {
+  id         String   @id
+  escapeId   String
+  code       String
+  progress   Int      @default(1)
+  inventory  EscapeItem[]
+  validUntil DateTime
+
+  escape  EscapeGame       @relation(fields: [escapeId], references: [id])
+  players EscapePlayer[]
+}
+
+model EscapePlayer {
+  token           String @default(cuid()) @unique
+  escapeSessionId String
+  cgu             Boolean
+
+  session EscapeSession @relation(fields: [escapeSessionId], references: [id])
+
+  @@unique([escapeSessionId, token])
+}
+
+model EscapeItem {
+  id         String @id
+  sessionId  String
+  escapeId   String
+  name       String
+
+  session EscapeSession @relation(fields: [sessionId], references: [id])
+  step    EscapeStep    @relation(fields: [escapeId], references: [id])
+
+  @@unique([sessionId, id])
+  @@unique([escapeId, name])
+}

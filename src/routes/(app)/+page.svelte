@@ -20,6 +20,7 @@
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
+    import { Checkbox } from "$lib/components/ui/checkbox";
     import * as Form from "$lib/components/ui/form";
     import * as RadioGroup from "$lib/components/ui/radio-group";
 </script>
@@ -38,6 +39,20 @@
                 <Input {...attrs} maxlength={6} placeholder="XXXXXX" bind:value={$formData.code} />
               </Form.Control>
               <Form.Description />
+              <Form.FieldErrors />
+            </Form.Field>
+            <Form.Field {form} name="cgu" class="flex items-center gap-2">
+              <Form.Control let:attrs>
+                <Checkbox {...attrs} bind:checked={$formData.cgu} />
+                <div class="space-y-1 leading-none">
+                  <Form.Label>Accept CGU</Form.Label>
+                  <Form.Description>
+                    Read more at <a
+                      href="/cgu">cgu</a
+                    > page.
+                  </Form.Description>
+                </div>
+              </Form.Control>
               <Form.FieldErrors />
             </Form.Field>
             <Button type="submit" class="w-full text-xl">
