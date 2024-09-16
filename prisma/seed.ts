@@ -1,8 +1,26 @@
 import { PrismaClient, StepType } from '@prisma/client';
+import { hash } from "@node-rs/argon2";
 
 const prisma = new PrismaClient();
 
 async function main() {
+    const passwordHash = await hash("12345678", {
+        // recommended minimum parameters
+        memoryCost: 19456,
+        timeCost: 2,
+        outputLen: 32,
+        parallelism: 1
+    });
+
+    await prisma.user.create({
+        data: {
+            id: "admin",
+            email: "admin@whidix.dev",
+            name: "Administateur",
+            credential: passwordHash,
+        }
+    });
+
     await prisma.escapeGame.create({
         data: {
             id: "1",
